@@ -90,5 +90,10 @@ namespace egret {
                 }
             }
         }
+
+        public static checkFramebufferStatus(gl: WebGLRenderingContext): number {
+            return 0;
+        }
+
     }
 }
