@@ -66,12 +66,16 @@ namespace egret.web {
          * 重置render target的尺寸
          */
         public resize(width: number, height: number): void {
-            if (width < 1) {
-                egret.warn('WebGLRenderTarget resize width = ' + width);
+            if (width < 1) {                
+                if(DEBUG){
+                    egret.warn('WebGLRenderTarget resize width = ' + width);
+                }
                 width = 1;
             }
             if (height < 1) {
-                egret.warn('WebGLRenderTarget resize height = ' + height);
+                if(DEBUG){
+                    egret.warn('WebGLRenderTarget resize height = ' + height);        
+                }
                 height = 1;
             }
             let gl = this.gl;

@@ -5491,11 +5491,15 @@ var egret;
              */
             WebGLRenderTarget.prototype.resize = function (width, height) {
                 if (width < 1) {
-                    egret.warn('WebGLRenderTarget resize width = ' + width);
+                    if (true) {
+                        egret.warn('WebGLRenderTarget resize width = ' + width);
+                    }
                     width = 1;
                 }
                 if (height < 1) {
-                    egret.warn('WebGLRenderTarget resize height = ' + height);
+                    if (true) {
+                        egret.warn('WebGLRenderTarget resize height = ' + height);
+                    }
                     height = 1;
                 }
                 var gl = this.gl;
