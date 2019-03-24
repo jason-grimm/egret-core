@@ -33,9 +33,16 @@ namespace egret {
         renderMode?: string;
         audioType?: number;
         screenAdapter?: sys.IScreenAdapter;
-        antialias?: boolean;
         canvasScaleFactor?: number;
         calculateCanvasScaleFactor?: (context: CanvasRenderingContext2D) => number;
+
+        //HTMLCanvasElement.getContext contextAttributes
+        antialias?: boolean;
+        stencil?: boolean;
+        alpha?: boolean;
+        depth?: boolean;
+        premultipliedAlpha?: boolean;
+        preserveDrawingBuffer?: boolean;
 
         //以下目前仅供微信小游戏使用
         entryClassName?: string;

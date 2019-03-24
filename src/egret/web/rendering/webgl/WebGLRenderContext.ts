@@ -44,7 +44,12 @@ namespace egret.web {
      */
     export class WebGLRenderContext {
 
+        public static stencil: boolean;
         public static antialias: boolean;
+        public static alpha: boolean;
+        public static depth: boolean;
+        public static premultipliedAlpha: boolean;
+        public static preserveDrawingBuffer: boolean;
 
         /**
          * 第一次上传顶点数组标记量
@@ -292,16 +297,23 @@ namespace egret.web {
             this.contextLost = false;
         }
 
-        private getWebGLContext() {
-            let options = {
+        private getWebGLContext(): void {
+            const options = {
+                stencil: WebGLRenderContext.stencil,
                 antialias: WebGLRenderContext.antialias,
-                stencil: true//设置可以使用模板（用于不规则遮罩）
+                alpha: WebGLRenderContext.alpha,
+                depth: WebGLRenderContext.depth,
+                premultipliedAlpha: WebGLRenderContext.premultipliedAlpha,
+                preserveDrawingBuffer: WebGLRenderContext.preserveDrawingBuffer,
+                failIfMajorPerformanceCaveat: false,
             };
-            let gl: any;
+            //https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
+            console.log('get WebGLRenderingContext contextAttributes:' + JSON.stringify(options));
+            let gl: CanvasRenderingContext2D | WebGLRenderingContext = null;
             //todo 是否使用chrome源码names
             //let contextNames = ["moz-webgl", "webkit-3d", "experimental-webgl", "webgl", "3d"];
-            let names = ["webgl", "experimental-webgl"];
-            for (let i = 0; i < names.length; i++) {
+            const names = ["webgl", "experimental-webgl"];
+            for (let i = 0, length = names.length; i < length; ++i) {
                 try {
                     gl = this.surface.getContext(names[i], options);
                 } catch (e) {
@@ -316,7 +328,7 @@ namespace egret.web {
             this.setContext(gl);
         }
 
-        public setContext(gl: any) {
+        public setContext(gl: any): void {
             this.context = gl;
             gl.id = WebGLRenderContext.glContextId++;
             this.glID = gl.id;

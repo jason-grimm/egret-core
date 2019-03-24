@@ -3492,6 +3492,7 @@ var egret;
             if (isRunning) {
                 return;
             }
+            console.log('run egret2d, engineVersion = ' + egret.Capabilities.engineVersion);
             isRunning = true;
             if (!options) {
                 options = {};
@@ -3505,9 +3506,15 @@ var egret;
                     web.Html5Capatibility.$init();
                     // WebGL上下文参数自定义
                     if (options.renderMode == "webgl") {
-                        // WebGL抗锯齿默认关闭，提升PC及某些平台性能
-                        var antialias = options.antialias;
-                        web.WebGLRenderContext.antialias = !!antialias;
+                        /*
+                        TODO
+                        */
+                        web.WebGLRenderContext.stencil = true || !!options.stencil; //TODO
+                        web.WebGLRenderContext.antialias = !!options.antialias;
+                        web.WebGLRenderContext.alpha = !!options.alpha;
+                        web.WebGLRenderContext.depth = !!options.depth;
+                        web.WebGLRenderContext.premultipliedAlpha = true || !!options.premultipliedAlpha; //TODO
+                        web.WebGLRenderContext.preserveDrawingBuffer = !!options.preserveDrawingBuffer;
                     }
                     egret.sys.CanvasRenderBuffer = web.CanvasRenderBuffer;
                     setRenderMode(options.renderMode);
@@ -3552,10 +3559,15 @@ var egret;
                 var renderMode = options.renderMode;
                 // WebGL上下文参数自定义
                 if (renderMode == "webgl") {
-                    // WebGL抗锯齿默认关闭，提升PC及某些平台性能
-                    var antialias = options.antialias;
-                    web.WebGLRenderContext.antialias = !!antialias;
-                    // WebGLRenderContext.antialias = (typeof antialias == undefined) ? true : antialias;
+                    /*
+                    TODO
+                    */
+                    web.WebGLRenderContext.stencil = true || !!options.stencil; //TODO
+                    web.WebGLRenderContext.antialias = !!options.antialias;
+                    web.WebGLRenderContext.alpha = !!options.alpha;
+                    web.WebGLRenderContext.depth = !!options.depth;
+                    web.WebGLRenderContext.premultipliedAlpha = true || !!options.premultipliedAlpha; //TODO
+                    web.WebGLRenderContext.preserveDrawingBuffer = !!options.preserveDrawingBuffer;
                 }
                 egret.sys.CanvasRenderBuffer = web.CanvasRenderBuffer;
                 if (ua.indexOf("egretnative") >= 0 && renderMode != "webgl") {
@@ -5886,14 +5898,21 @@ var egret;
             };
             WebGLRenderContext.prototype.getWebGLContext = function () {
                 var options = {
+                    stencil: WebGLRenderContext.stencil,
                     antialias: WebGLRenderContext.antialias,
-                    stencil: true //设置可以使用模板（用于不规则遮罩）
+                    alpha: WebGLRenderContext.alpha,
+                    depth: WebGLRenderContext.depth,
+                    premultipliedAlpha: WebGLRenderContext.premultipliedAlpha,
+                    preserveDrawingBuffer: WebGLRenderContext.preserveDrawingBuffer,
+                    failIfMajorPerformanceCaveat: false,
                 };
-                var gl;
+                //https://developer.mozilla.org/en-US/docs/Web/API/HTMLCanvasElement/getContext
+                console.log('get WebGLRenderingContext contextAttributes:' + JSON.stringify(options));
+                var gl = null;
                 //todo 是否使用chrome源码names
                 //let contextNames = ["moz-webgl", "webkit-3d", "experimental-webgl", "webgl", "3d"];
                 var names = ["webgl", "experimental-webgl"];
-                for (var i = 0; i < names.length; i++) {
+                for (var i = 0, length_3 = names.length; i < length_3; ++i) {
                     try {
                         gl = this.surface.getContext(names[i], options);
                     }
@@ -7269,8 +7288,8 @@ var egret;
                     if (renderBufferPool.length > 6) {
                         renderBufferPool.length = 6;
                     }
-                    var length_3 = renderBufferPool.length;
-                    for (var i = 0; i < length_3; i++) {
+                    var length_4 = renderBufferPool.length;
+                    for (var i = 0; i < length_4; i++) {
                         renderBufferPool[i].resize(0, 0);
                     }
                 }
@@ -7338,8 +7357,8 @@ var egret;
                 }
                 var children = displayObject.$children;
                 if (displayObject.$hasChildren) {
-                    var length_4 = children.length;
-                    for (var i = 0; i < length_4; i++) {
+                    var length_5 = children.length;
+                    for (var i = 0; i < length_5; i++) {
                         var child = children[i];
                         var offsetX2 = void 0;
                         var offsetY2 = void 0;
@@ -7784,8 +7803,8 @@ var egret;
                 }
                 var children = displayObject.$children;
                 if (children) {
-                    var length_5 = children.length;
-                    for (var i = 0; i < length_5; i++) {
+                    var length_6 = children.length;
+                    for (var i = 0; i < length_6; i++) {
                         var child = children[i];
                         if (child.$renderMode === 1 /* DEFAULT */) {
                             drawCalls += this.drawDisplayObject(child, buffer, 0, 0);

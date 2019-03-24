@@ -8805,9 +8805,14 @@ declare namespace egret {
         renderMode?: string;
         audioType?: number;
         screenAdapter?: sys.IScreenAdapter;
-        antialias?: boolean;
         canvasScaleFactor?: number;
         calculateCanvasScaleFactor?: (context: CanvasRenderingContext2D) => number;
+        antialias?: boolean;
+        stencil?: boolean;
+        alpha?: boolean;
+        depth?: boolean;
+        premultipliedAlpha?: boolean;
+        preserveDrawingBuffer?: boolean;
         entryClassName?: string;
         scaleMode?: string;
         frameRate?: number;

@@ -56,6 +56,7 @@ namespace egret.web {
         if (isRunning) {
             return;
         }
+        console.log('run egret2d, engineVersion = ' + egret.Capabilities.engineVersion);
         isRunning = true;
         if (!options) {
             options = {};
@@ -71,9 +72,15 @@ namespace egret.web {
 
                 // WebGL上下文参数自定义
                 if (options.renderMode == "webgl") {
-                    // WebGL抗锯齿默认关闭，提升PC及某些平台性能
-                    let antialias = options.antialias;
-                    WebGLRenderContext.antialias = !!antialias;
+                    /*
+                    TODO
+                    */
+                    WebGLRenderContext.stencil = true || !!options.stencil; //TODO
+                    WebGLRenderContext.antialias = !!options.antialias;
+                    WebGLRenderContext.alpha = !!options.alpha;
+                    WebGLRenderContext.depth = !!options.depth;
+                    WebGLRenderContext.premultipliedAlpha = true || !!options.premultipliedAlpha; //TODO
+                    WebGLRenderContext.preserveDrawingBuffer = !!options.preserveDrawingBuffer;
                 }
 
                 sys.CanvasRenderBuffer = CanvasRenderBuffer;
@@ -122,10 +129,15 @@ namespace egret.web {
             let renderMode = options.renderMode;
             // WebGL上下文参数自定义
             if (renderMode == "webgl") {
-                // WebGL抗锯齿默认关闭，提升PC及某些平台性能
-                let antialias = options.antialias;
-                WebGLRenderContext.antialias = !!antialias;
-                // WebGLRenderContext.antialias = (typeof antialias == undefined) ? true : antialias;
+                /*
+                TODO
+                */
+                WebGLRenderContext.stencil = true || !!options.stencil; //TODO
+                WebGLRenderContext.antialias = !!options.antialias;
+                WebGLRenderContext.alpha = !!options.alpha;
+                WebGLRenderContext.depth = !!options.depth;
+                WebGLRenderContext.premultipliedAlpha = true || !!options.premultipliedAlpha; //TODO
+                WebGLRenderContext.preserveDrawingBuffer = !!options.preserveDrawingBuffer;
             }
 
             sys.CanvasRenderBuffer = web.CanvasRenderBuffer;
