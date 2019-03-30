@@ -5764,6 +5764,12 @@ var egret;
          */
         var WebGLRenderContext = (function () {
             function WebGLRenderContext() {
+                //
+                this.currentRenderer = null;
+                this.emptyRenderer = new egret.sys.ObjectRenderer;
+                this.batchRenderer = new egret.sys.BatchRenderer;
+                this.particleRenderer = new egret.sys.ParticleRenderer;
+                this.meshRenderer = new egret.sys.MeshRenderer;
                 this.glID = null;
                 this.projectionX = NaN;
                 this.projectionY = NaN;
@@ -5785,6 +5791,9 @@ var egret;
                 this.setBatchSize(2000);
                 this.setGlobalCompositeOperation("source-over");
                 this.firstTimeUploadVertices = true;
+                //
+                this.currentRenderer = this.emptyRenderer;
+                this.currentRenderer.start();
             }
             WebGLRenderContext.getInstance = function () {
                 if (this.instance) {
@@ -5853,6 +5862,52 @@ var egret;
                 var gl = this.context;
                 gl.bufferData(gl.ELEMENT_ARRAY_BUFFER, array, gl.STATIC_DRAW);
             };
+            WebGLRenderContext.prototype.setObjectRenderer = function (target) {
+                if (this.currentRenderer === target) {
+                    return;
+                }
+                this.currentRenderer.stop();
+                this.currentRenderer = target;
+                this.currentRenderer.start();
+            };
+            WebGLRenderContext.prototype.flush = function () {
+                console.log('__________________________flush__________________________');
+                this.currentRenderer.flush();
+            };
+            WebGLRenderContext.prototype.reset = function () {
+                console.log('__________________________reset current renderer to empty__________________________');
+                this.setObjectRenderer(this.emptyRenderer);
+            };
+            WebGLRenderContext.prototype.renderObject = function (node) {
+                this.currentRenderer.render(node);
+            };
+            WebGLRenderContext.prototype.setObjectRendererByRenderNode = function (node) {
+                switch (node.type) {
+                    case 6 /* NormalBitmapNode */:
+                    case 1 /* BitmapNode */:
+                    case 2 /* TextNode */:
+                    case 3 /* GraphicsNode */: {
+                        this.setObjectRenderer(this.batchRenderer);
+                        break;
+                    }
+                    case 4 /* GroupNode */: {
+                        //group do not need objectRender
+                        break;
+                    }
+                    case 5 /* MeshNode */: {
+                        this.setObjectRenderer(this.meshRenderer);
+                        break;
+                    }
+                    case 7 /* ParticleNode */: {
+                        this.setObjectRenderer(this.particleRenderer);
+                        break;
+                    }
+                    default: {
+                        ///error?
+                    }
+                }
+            };
+            ////
             WebGLRenderContext.prototype.setBatchSize = function (size) {
                 var result = this.vao.setBatchSize(size);
                 if (result) {
@@ -6499,6 +6554,8 @@ var egret;
                 // 清空数据
                 this.drawCmdManager.clear();
                 this.vao.clear();
+                this.flush();
+                this.reset();
             };
             /**
              * 执行绘制命令
@@ -7091,45 +7148,57 @@ var egret;
              * @param width 宽度
              * @param height 高度
              */
-            WebGLRenderBuffer.prototype.drawFrameBufferToSurface = function (sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, clear) {
-                if (clear === void 0) { clear = false; }
+            /*
+            private drawFrameBufferToSurface(sourceX: number,
+                sourceY: number, sourceWidth: number, sourceHeight: number, destX: number, destY: number, destWidth: number, destHeight: number, clear: boolean = false): void {
                 this.rootRenderTarget.useFrameBuffer = false;
                 this.rootRenderTarget.activate();
-                this.context.disableStencilTest(); // 切换frameBuffer注意要禁用STENCIL_TEST
+    
+                this.context.disableStencilTest();// 切换frameBuffer注意要禁用STENCIL_TEST
                 this.context.disableScissorTest();
+    
                 this.setTransform(1, 0, 0, 1, 0, 0);
                 this.globalAlpha = 1;
                 this.context.setGlobalCompositeOperation("source-over");
                 clear && this.context.clear();
-                this.context.drawImage(this.rootRenderTarget, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, sourceWidth, sourceHeight, false);
+                this.context.drawImage(<BitmapData><any>this.rootRenderTarget, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, sourceWidth, sourceHeight, false);
                 this.context.$drawWebGL();
+    
                 this.rootRenderTarget.useFrameBuffer = true;
                 this.rootRenderTarget.activate();
+    
                 this.restoreStencil();
                 this.restoreScissor();
-            };
+            }
+            */
             /**
              * 交换surface的图像到frameBuffer中
              * @param width 宽度
              * @param height 高度
              */
-            WebGLRenderBuffer.prototype.drawSurfaceToFrameBuffer = function (sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, clear) {
-                if (clear === void 0) { clear = false; }
+            /*
+            private drawSurfaceToFrameBuffer(sourceX: number,
+                sourceY: number, sourceWidth: number, sourceHeight: number, destX: number, destY: number, destWidth: number, destHeight: number, clear: boolean = false): void {
                 this.rootRenderTarget.useFrameBuffer = true;
                 this.rootRenderTarget.activate();
-                this.context.disableStencilTest(); // 切换frameBuffer注意要禁用STENCIL_TEST
+    
+                this.context.disableStencilTest();// 切换frameBuffer注意要禁用STENCIL_TEST
                 this.context.disableScissorTest();
+    
                 this.setTransform(1, 0, 0, 1, 0, 0);
                 this.globalAlpha = 1;
                 this.context.setGlobalCompositeOperation("source-over");
                 clear && this.context.clear();
-                this.context.drawImage(this.context.surface, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, sourceWidth, sourceHeight, false);
+                this.context.drawImage(<BitmapData><any>this.context.surface, sourceX, sourceY, sourceWidth, sourceHeight, destX, destY, destWidth, destHeight, sourceWidth, sourceHeight, false);
                 this.context.$drawWebGL();
+    
                 this.rootRenderTarget.useFrameBuffer = false;
                 this.rootRenderTarget.activate();
+    
                 this.restoreStencil();
                 this.restoreScissor();
-            };
+            }
+            */
             /**
              * 清空缓冲区数据
              */
@@ -7347,27 +7416,63 @@ var egret;
                     drawCalls++;
                     buffer.$offsetX = offsetX;
                     buffer.$offsetY = offsetY;
-                    if (node.type == 6 /* NormalBitmapNode */) {
-                        this.renderNormalBitmap(node, buffer);
+                    web.WebGLRenderContext.getInstance().setObjectRendererByRenderNode(node);
+                    switch (node.type) {
+                        case 6 /* NormalBitmapNode */: {
+                            this.renderNormalBitmap(node, buffer);
+                            break;
+                        }
+                        case 1 /* BitmapNode */: {
+                            this.renderBitmap(node, buffer);
+                            break;
+                        }
+                        case 2 /* TextNode */: {
+                            this.renderText(node, buffer);
+                            break;
+                        }
+                        case 3 /* GraphicsNode */: {
+                            this.renderGraphics(node, buffer);
+                            break;
+                        }
+                        case 4 /* GroupNode */: {
+                            this.renderGroup(node, buffer);
+                            break;
+                        }
+                        case 5 /* MeshNode */: {
+                            this.renderMesh(node, buffer);
+                            break;
+                        }
+                        case 7 /* ParticleNode */: {
+                            this.renderParticle(node, buffer);
+                            break;
+                        }
+                        default: {
+                            ///error?
+                        }
                     }
-                    else if (node.type == 1 /* BitmapNode */) {
-                        this.renderBitmap(node, buffer);
+                    /*
+                    if (node.type == sys.RenderNodeType.NormalBitmapNode) {
+                        this.renderNormalBitmap(<sys.NormalBitmapNode>node, buffer);
                     }
-                    else if (node.type == 2 /* TextNode */) {
-                        this.renderText(node, buffer);
+                    else if (node.type == sys.RenderNodeType.BitmapNode) {
+                        this.renderBitmap(<sys.BitmapNode>node, buffer);
                     }
-                    else if (node.type == 3 /* GraphicsNode */) {
-                        this.renderGraphics(node, buffer);
+                    else if (node.type == sys.RenderNodeType.TextNode) {
+                        this.renderText(<sys.TextNode>node, buffer);
                     }
-                    else if (node.type == 4 /* GroupNode */) {
-                        this.renderGroup(node, buffer);
+                    else if (node.type == sys.RenderNodeType.GraphicsNode) {
+                        this.renderGraphics(<sys.GraphicsNode>node, buffer);
                     }
-                    else if (node.type == 5 /* MeshNode */) {
-                        this.renderMesh(node, buffer);
+                    else if (node.type == sys.RenderNodeType.GroupNode) {
+                        this.renderGroup(<sys.GroupNode>node, buffer);
                     }
-                    else if (node.type == 7 /* ParticleNode */) {
-                        this.renderParticle(node, buffer);
+                    else if (node.type == sys.RenderNodeType.MeshNode) {
+                        this.renderMesh(<sys.MeshNode>node, buffer);
                     }
+                    else if (node.type == sys.RenderNodeType.ParticleNode) {
+                        this.renderParticle(<sys.ParticleNode>node, buffer);
+                    }
+                    */
                     buffer.$offsetX = 0;
                     buffer.$offsetY = 0;
                 }
@@ -7798,6 +7903,7 @@ var egret;
                 var drawCalls = 0;
                 if (displayObject.$hasRenderNode) {
                     drawCalls++;
+                    web.WebGLRenderContext.getInstance().setObjectRendererByRenderNode(node);
                     if (node.type == 6 /* NormalBitmapNode */) {
                         this.renderNormalBitmap(node, buffer);
                     }
@@ -7850,6 +7956,7 @@ var egret;
             WebGLRenderer.prototype.renderNode = function (node, buffer, offsetX, offsetY, forHitTest) {
                 buffer.$offsetX = offsetX;
                 buffer.$offsetY = offsetY;
+                web.WebGLRenderContext.getInstance().setObjectRendererByRenderNode(node);
                 if (node.type == 6 /* NormalBitmapNode */) {
                     this.renderNormalBitmap(node, buffer);
                 }
@@ -7876,6 +7983,7 @@ var egret;
              * @private
              */
             WebGLRenderer.prototype.renderNormalBitmap = function (node, buffer) {
+                buffer.context.renderObject(node);
                 var image = node.image;
                 if (!image) {
                     return;
@@ -7886,6 +7994,7 @@ var egret;
              * @private
              */
             WebGLRenderer.prototype.renderBitmap = function (node, buffer) {
+                buffer.context.renderObject(node);
                 var image = node.image;
                 if (!image) {
                     return;
@@ -7958,6 +8067,7 @@ var egret;
              * @private
              */
             WebGLRenderer.prototype.renderMesh = function (node, buffer) {
+                buffer.context.renderObject(node);
                 var image = node.image;
                 //buffer.imageSmoothingEnabled = node.smoothing;
                 var data = node.drawData;
@@ -8027,6 +8137,7 @@ var egret;
              * @private
              */
             WebGLRenderer.prototype.renderText = function (node, buffer) {
+                buffer.context.renderObject(node);
                 var width = node.width - node.x;
                 var height = node.height - node.y;
                 if (width <= 0 || height <= 0 || !width || !height || node.drawData.length == 0) {
@@ -8102,6 +8213,7 @@ var egret;
              * @private
              */
             WebGLRenderer.prototype.renderGraphics = function (node, buffer, forHitTest) {
+                buffer.context.renderObject(node);
                 var width = node.width;
                 var height = node.height;
                 if (width <= 0 || height <= 0 || !width || !height || node.drawData.length == 0) {
@@ -8187,6 +8299,7 @@ var egret;
              * @private
              */
             WebGLRenderer.prototype.renderParticle = function (node, buffer) {
+                buffer.context.renderObject(node);
                 var image = node.image;
                 if (!image) {
                     return;
@@ -8203,6 +8316,7 @@ var egret;
                 buffer.context.$drawWebGL();
             };
             WebGLRenderer.prototype.renderGroup = function (groupNode, buffer) {
+                buffer.context.renderObject(groupNode);
                 var m = groupNode.matrix;
                 var savedMatrix;
                 var offsetX;

@@ -29,6 +29,44 @@
 
 namespace egret.sys {
 
+    //
+    export class ParticleRenderer extends ObjectRenderer {
+   
+        constructor() {
+            super();
+            console.log('ParticleRenderer constructor');
+        }
+
+        public onPrerender(): void {
+            console.log('ParticleRenderer onPrerender');
+        }
+
+        public start(): void {
+            console.log('ParticleRenderer start');
+        }
+
+        public stop(): void {
+            console.log('ParticleRenderer stop');
+            this.flush();
+        }
+
+        public flush(): void {
+            console.log('ParticleRenderer flush');
+        }
+
+        public render(renderNode: RenderNode): void {
+            console.log('ParticleRenderer render = ' + renderNode);
+        }
+
+        public contextChange(gl: WebGLRenderingContext): void {
+            console.log('ParticleRenderer contextChange = ' + gl);
+        }
+
+        public destroy(): void {
+            console.log('ParticleRenderer destroy');
+        }
+    }
+
     /**
      * @private
      * 粒子渲染节点

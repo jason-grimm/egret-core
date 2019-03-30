@@ -3402,6 +3402,16 @@ declare namespace egret.sys {
         cleanBeforeRender(): void;
         $getRenderCount(): number;
     }
+    class ObjectRenderer {
+        constructor();
+        onPrerender(): void;
+        start(): void;
+        stop(): void;
+        flush(): void;
+        render(renderNode: RenderNode): void;
+        contextChange(gl: WebGLRenderingContext): void;
+        destroy(): void;
+    }
 }
 declare namespace egret.sys {
     /**
@@ -9617,6 +9627,17 @@ declare namespace egret.sys {
     }
 }
 declare namespace egret.sys {
+    class BatchRenderer extends ObjectRenderer {
+        readonly renderNodes: egret.sys.RenderNode[];
+        constructor();
+        onPrerender(): void;
+        start(): void;
+        stop(): void;
+        flush(): void;
+        render(renderNode: egret.sys.RenderNode): void;
+        contextChange(gl: WebGLRenderingContext): void;
+        destroy(): void;
+    }
     /**
      * @private
      * 位图渲染节点
@@ -9779,6 +9800,16 @@ declare namespace egret.sys {
     }
 }
 declare namespace egret.sys {
+    class MeshRenderer extends ObjectRenderer {
+        constructor();
+        onPrerender(): void;
+        start(): void;
+        stop(): void;
+        flush(): void;
+        render(renderNode: RenderNode): void;
+        contextChange(gl: WebGLRenderingContext): void;
+        destroy(): void;
+    }
     /**
      * @private
      * Mesh 渲染节点
@@ -9899,6 +9930,16 @@ declare namespace egret.sys {
     }
 }
 declare namespace egret.sys {
+    class ParticleRenderer extends ObjectRenderer {
+        constructor();
+        onPrerender(): void;
+        start(): void;
+        stop(): void;
+        flush(): void;
+        render(renderNode: RenderNode): void;
+        contextChange(gl: WebGLRenderingContext): void;
+        destroy(): void;
+    }
     /**
      * @private
      * 粒子渲染节点

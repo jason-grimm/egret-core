@@ -125,7 +125,41 @@ namespace egret.web {
                 drawCalls++;
                 buffer.$offsetX = offsetX;
                 buffer.$offsetY = offsetY;
-
+                WebGLRenderContext.getInstance().setObjectRendererByRenderNode(node);
+                switch (node.type) {
+                    case sys.RenderNodeType.NormalBitmapNode: {
+                        this.renderNormalBitmap(<sys.NormalBitmapNode>node, buffer);
+                        break;
+                    }
+                    case sys.RenderNodeType.BitmapNode: {
+                        this.renderBitmap(<sys.BitmapNode>node, buffer);
+                        break;
+                    }
+                    case sys.RenderNodeType.TextNode: {
+                        this.renderText(<sys.TextNode>node, buffer);
+                        break;
+                    }
+                    case sys.RenderNodeType.GraphicsNode: {
+                        this.renderGraphics(<sys.GraphicsNode>node, buffer);
+                        break;
+                    }
+                    case sys.RenderNodeType.GroupNode: {
+                        this.renderGroup(<sys.GroupNode>node, buffer);
+                        break;
+                    }
+                    case sys.RenderNodeType.MeshNode: {
+                        this.renderMesh(<sys.MeshNode>node, buffer);
+                        break;
+                    }
+                    case sys.RenderNodeType.ParticleNode: {
+                        this.renderParticle(<sys.ParticleNode>node, buffer);
+                        break;
+                    }
+                    default:{
+                        ///error?
+                    }
+                }
+                /*
                 if (node.type == sys.RenderNodeType.NormalBitmapNode) {
                     this.renderNormalBitmap(<sys.NormalBitmapNode>node, buffer);
                 }
@@ -147,6 +181,7 @@ namespace egret.web {
                 else if (node.type == sys.RenderNodeType.ParticleNode) {
                     this.renderParticle(<sys.ParticleNode>node, buffer);
                 }
+                */
 
                 buffer.$offsetX = 0;
                 buffer.$offsetY = 0;
@@ -607,6 +642,7 @@ namespace egret.web {
             let drawCalls = 0;
             if (displayObject.$hasRenderNode) {
                 drawCalls++;
+                WebGLRenderContext.getInstance().setObjectRendererByRenderNode(node);
                 if (node.type == sys.RenderNodeType.NormalBitmapNode) {
                     this.renderNormalBitmap(<sys.NormalBitmapNode>node, buffer);
                 }
@@ -664,6 +700,7 @@ namespace egret.web {
         private renderNode(node: sys.RenderNode, buffer: WebGLRenderBuffer, offsetX: number, offsetY: number, forHitTest?: boolean): void {
             buffer.$offsetX = offsetX;
             buffer.$offsetY = offsetY;
+            WebGLRenderContext.getInstance().setObjectRendererByRenderNode(node);
             if (node.type == sys.RenderNodeType.NormalBitmapNode) {
                 this.renderNormalBitmap(<sys.NormalBitmapNode>node, buffer);
             }
@@ -692,6 +729,7 @@ namespace egret.web {
          * @private
          */
         private renderNormalBitmap(node: sys.NormalBitmapNode, buffer: WebGLRenderBuffer): void {
+            buffer.context.renderObject(node);
             let image = node.image;
             if (!image) {
                 return;
@@ -703,6 +741,7 @@ namespace egret.web {
          * @private
          */
         private renderBitmap(node: sys.BitmapNode, buffer: WebGLRenderBuffer): void {
+            buffer.context.renderObject(node);
             let image = node.image;
             if (!image) {
                 return;
@@ -778,6 +817,7 @@ namespace egret.web {
          * @private
          */
         private renderMesh(node: sys.MeshNode, buffer: WebGLRenderBuffer): void {
+            buffer.context.renderObject(node);
             let image = node.image;
             //buffer.imageSmoothingEnabled = node.smoothing;
             let data = node.drawData;
@@ -853,6 +893,7 @@ namespace egret.web {
          * @private
          */
         private renderText(node: sys.TextNode, buffer: WebGLRenderBuffer): void {
+            buffer.context.renderObject(node);
             let width = node.width - node.x;
             let height = node.height - node.y;
             if (width <= 0 || height <= 0 || !width || !height || node.drawData.length == 0) {
@@ -934,6 +975,7 @@ namespace egret.web {
          * @private
          */
         private renderGraphics(node: sys.GraphicsNode, buffer: WebGLRenderBuffer, forHitTest?: boolean): void {
+            buffer.context.renderObject(node);
             let width = node.width;
             let height = node.height;
             if (width <= 0 || height <= 0 || !width || !height || node.drawData.length == 0) {
@@ -1021,6 +1063,7 @@ namespace egret.web {
          * @private
          */
         private renderParticle(node: sys.ParticleNode, buffer: WebGLRenderBuffer): void {
+            buffer.context.renderObject(node);
             let image = node.image;
             if (!image) {
                 return;
@@ -1038,6 +1081,7 @@ namespace egret.web {
         }
 
         private renderGroup(groupNode: sys.GroupNode, buffer: WebGLRenderBuffer): void {
+            buffer.context.renderObject(groupNode);
             let m = groupNode.matrix;
             let savedMatrix;
             let offsetX;

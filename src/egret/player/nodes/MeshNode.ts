@@ -29,6 +29,45 @@
 
 namespace egret.sys {
 
+    //
+    export class MeshRenderer extends ObjectRenderer {
+   
+        constructor() {
+            super();
+            console.log('MeshRenderer constructor');
+        }
+
+        public onPrerender(): void {
+            console.log('MeshRenderer onPrerender');
+        }
+
+        public start(): void {
+            console.log('MeshRenderer start');
+        }
+
+        public stop(): void {
+            console.log('MeshRenderer stop');
+            this.flush();
+        }
+
+        public flush(): void {
+            console.log('MeshRenderer flush');
+        }
+
+        public render(renderNode: RenderNode): void {
+            console.log('MeshRenderer render = ' + renderNode);
+        }
+
+        public contextChange(gl: WebGLRenderingContext): void {
+            console.log('MeshRenderer contextChange = ' + gl);
+        }
+
+        public destroy(): void {
+            console.log('MeshRenderer destroy');
+        }
+    }
+
+
     /**
      * @private
      * Mesh 渲染节点

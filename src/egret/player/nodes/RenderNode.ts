@@ -72,25 +72,61 @@ namespace egret.sys {
         /**
          * 节点类型..
          */
-        public type:number = 0;
+        public type: number = 0;
         /**
          * 绘制数据
          */
-        public drawData:any[] = [];
+        public drawData: any[] = [];
         /**
          * 绘制次数
          */
-        protected renderCount:number = 0;
+        protected renderCount: number = 0;
         /**
          * 在显示对象的$updateRenderNode()方法被调用前，自动清空自身的drawData数据。
          */
-        public cleanBeforeRender():void{
+        public cleanBeforeRender(): void {
             this.drawData.length = 0;
             this.renderCount = 0;
         }
 
-        public $getRenderCount():number {
+        public $getRenderCount(): number {
             return this.renderCount;
+        }
+    }
+
+    export class ObjectRenderer {
+
+        constructor() {
+            //console.log('ObjectRenderer constructor');
+        }
+
+        public onPrerender(): void {
+            console.log('ObjectRenderer onPrerender');
+        }
+
+        public start(): void {
+            console.log('ObjectRenderer start');
+        }
+
+        public stop(): void {
+            console.log('ObjectRenderer stop');
+            this.flush();
+        }
+
+        public flush(): void {
+            console.log('ObjectRenderer flush');
+        }
+
+        public render(renderNode: RenderNode): void {
+            console.log('ObjectRenderer render = ' + renderNode);
+        }
+
+        public contextChange(gl: WebGLRenderingContext): void {
+            console.log('ObjectRenderer contextChange = ' + gl);
+        }
+
+        public destroy(): void {
+            console.log('ObjectRenderer destroy');
         }
     }
 }

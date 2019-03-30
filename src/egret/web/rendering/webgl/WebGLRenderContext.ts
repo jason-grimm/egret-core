@@ -44,12 +44,20 @@ namespace egret.web {
      */
     export class WebGLRenderContext {
 
+        //runEgret Options
         public static stencil: boolean;
         public static antialias: boolean;
         public static alpha: boolean;
         public static depth: boolean;
         public static premultipliedAlpha: boolean;
         public static preserveDrawingBuffer: boolean;
+
+        //
+        public currentRenderer: egret.sys.ObjectRenderer = null;
+        public readonly emptyRenderer: egret.sys.ObjectRenderer = new egret.sys.ObjectRenderer;
+        public readonly batchRenderer: egret.sys.BatchRenderer = new egret.sys.BatchRenderer;
+        public readonly particleRenderer: egret.sys.ParticleRenderer = new egret.sys.ParticleRenderer;
+        public readonly meshRenderer: egret.sys.MeshRenderer = new egret.sys.MeshRenderer;
 
         /**
          * 第一次上传顶点数组标记量
@@ -214,8 +222,62 @@ namespace egret.web {
 
             this.firstTimeUploadVertices = true;
 
+            //
+            this.currentRenderer = this.emptyRenderer;
+            this.currentRenderer.start();
         }
 
+        public setObjectRenderer(target: egret.sys.ObjectRenderer): void {
+            if (this.currentRenderer === target) {
+                return;
+            }
+            this.currentRenderer.stop();
+            this.currentRenderer = target;
+            this.currentRenderer.start();
+        }
+
+        public flush(): void {
+            console.log('__________________________flush__________________________');
+            this.currentRenderer.flush();
+        }
+
+        public reset(): void {
+            console.log('__________________________reset current renderer to empty__________________________');
+            this.setObjectRenderer(this.emptyRenderer);
+        }
+
+        public renderObject(node: egret.sys.RenderNode): void {
+            this.currentRenderer.render(node);
+        }
+
+        public setObjectRendererByRenderNode(node: egret.sys.RenderNode): void {
+            switch (node.type) {
+                case sys.RenderNodeType.NormalBitmapNode:
+                case sys.RenderNodeType.BitmapNode:
+                case sys.RenderNodeType.TextNode:
+                case sys.RenderNodeType.GraphicsNode: {
+                    this.setObjectRenderer(this.batchRenderer);
+                    break;
+                }
+                case sys.RenderNodeType.GroupNode: {
+                    //group do not need objectRender
+                    break;
+                }
+                case sys.RenderNodeType.MeshNode: {
+                    this.setObjectRenderer(this.meshRenderer);
+                    break;
+                }
+                case sys.RenderNodeType.ParticleNode: {
+                    this.setObjectRenderer(this.particleRenderer);
+                    break;
+                }
+                default: {
+                    ///error?
+                }
+            }
+        }
+
+        ////
         public setBatchSize(size: number): void {
             const result = this.vao.setBatchSize(size);
             if (result) {
@@ -937,7 +999,6 @@ namespace egret.web {
 
             //for 3D&2D
             // (this as any).drawFunc();
-
             //for only2D
             if (this.drawCmdManager.drawDataLen == 0 || this.contextLost) {
                 return;
@@ -978,6 +1039,9 @@ namespace egret.web {
             // 清空数据
             this.drawCmdManager.clear();
             this.vao.clear();
+
+            this.flush();
+            this.reset();
         }
 
         /**

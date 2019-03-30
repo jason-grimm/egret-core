@@ -6045,6 +6045,36 @@ var egret;
         }());
         sys.RenderNode = RenderNode;
         __reflect(RenderNode.prototype, "egret.sys.RenderNode");
+        var ObjectRenderer = (function () {
+            function ObjectRenderer() {
+                //console.log('ObjectRenderer constructor');
+            }
+            ObjectRenderer.prototype.onPrerender = function () {
+                console.log('ObjectRenderer onPrerender');
+            };
+            ObjectRenderer.prototype.start = function () {
+                console.log('ObjectRenderer start');
+            };
+            ObjectRenderer.prototype.stop = function () {
+                console.log('ObjectRenderer stop');
+                this.flush();
+            };
+            ObjectRenderer.prototype.flush = function () {
+                console.log('ObjectRenderer flush');
+            };
+            ObjectRenderer.prototype.render = function (renderNode) {
+                console.log('ObjectRenderer render = ' + renderNode);
+            };
+            ObjectRenderer.prototype.contextChange = function (gl) {
+                console.log('ObjectRenderer contextChange = ' + gl);
+            };
+            ObjectRenderer.prototype.destroy = function () {
+                console.log('ObjectRenderer destroy');
+            };
+            return ObjectRenderer;
+        }());
+        sys.ObjectRenderer = ObjectRenderer;
+        __reflect(ObjectRenderer.prototype, "egret.sys.ObjectRenderer");
     })(sys = egret.sys || (egret.sys = {}));
 })(egret || (egret = {}));
 //////////////////////////////////////////////////////////////////////////////////////
@@ -14614,6 +14644,43 @@ var egret;
 (function (egret) {
     var sys;
     (function (sys) {
+        //
+        var BatchRenderer = (function (_super) {
+            __extends(BatchRenderer, _super);
+            function BatchRenderer() {
+                var _this = _super.call(this) || this;
+                _this.renderNodes = [];
+                console.log('BatchRenderer constructor');
+                return _this;
+            }
+            BatchRenderer.prototype.onPrerender = function () {
+                console.log('BatchRenderer onPrerender');
+            };
+            BatchRenderer.prototype.start = function () {
+                console.log('BatchRenderer start');
+            };
+            BatchRenderer.prototype.stop = function () {
+                console.log('BatchRenderer stop');
+                this.flush();
+            };
+            BatchRenderer.prototype.flush = function () {
+                console.log('BatchRenderer flush = ' + this.renderNodes.length);
+                this.renderNodes.length = 0;
+            };
+            BatchRenderer.prototype.render = function (renderNode) {
+                console.log('BatchRenderer render = ' + renderNode.type);
+                this.renderNodes.push(renderNode);
+            };
+            BatchRenderer.prototype.contextChange = function (gl) {
+                console.log('BatchRenderer contextChange = ' + gl);
+            };
+            BatchRenderer.prototype.destroy = function () {
+                console.log('BatchRenderer destroy');
+            };
+            return BatchRenderer;
+        }(sys.ObjectRenderer));
+        sys.BatchRenderer = BatchRenderer;
+        __reflect(BatchRenderer.prototype, "egret.sys.BatchRenderer");
         /**
          * @private
          * 位图渲染节点
@@ -15093,6 +15160,40 @@ var egret;
 (function (egret) {
     var sys;
     (function (sys) {
+        //
+        var MeshRenderer = (function (_super) {
+            __extends(MeshRenderer, _super);
+            function MeshRenderer() {
+                var _this = _super.call(this) || this;
+                console.log('MeshRenderer constructor');
+                return _this;
+            }
+            MeshRenderer.prototype.onPrerender = function () {
+                console.log('MeshRenderer onPrerender');
+            };
+            MeshRenderer.prototype.start = function () {
+                console.log('MeshRenderer start');
+            };
+            MeshRenderer.prototype.stop = function () {
+                console.log('MeshRenderer stop');
+                this.flush();
+            };
+            MeshRenderer.prototype.flush = function () {
+                console.log('MeshRenderer flush');
+            };
+            MeshRenderer.prototype.render = function (renderNode) {
+                console.log('MeshRenderer render = ' + renderNode);
+            };
+            MeshRenderer.prototype.contextChange = function (gl) {
+                console.log('MeshRenderer contextChange = ' + gl);
+            };
+            MeshRenderer.prototype.destroy = function () {
+                console.log('MeshRenderer destroy');
+            };
+            return MeshRenderer;
+        }(sys.ObjectRenderer));
+        sys.MeshRenderer = MeshRenderer;
+        __reflect(MeshRenderer.prototype, "egret.sys.MeshRenderer");
         /**
          * @private
          * Mesh 渲染节点
@@ -15314,6 +15415,40 @@ var egret;
 (function (egret) {
     var sys;
     (function (sys) {
+        //
+        var ParticleRenderer = (function (_super) {
+            __extends(ParticleRenderer, _super);
+            function ParticleRenderer() {
+                var _this = _super.call(this) || this;
+                console.log('ParticleRenderer constructor');
+                return _this;
+            }
+            ParticleRenderer.prototype.onPrerender = function () {
+                console.log('ParticleRenderer onPrerender');
+            };
+            ParticleRenderer.prototype.start = function () {
+                console.log('ParticleRenderer start');
+            };
+            ParticleRenderer.prototype.stop = function () {
+                console.log('ParticleRenderer stop');
+                this.flush();
+            };
+            ParticleRenderer.prototype.flush = function () {
+                console.log('ParticleRenderer flush');
+            };
+            ParticleRenderer.prototype.render = function (renderNode) {
+                console.log('ParticleRenderer render = ' + renderNode);
+            };
+            ParticleRenderer.prototype.contextChange = function (gl) {
+                console.log('ParticleRenderer contextChange = ' + gl);
+            };
+            ParticleRenderer.prototype.destroy = function () {
+                console.log('ParticleRenderer destroy');
+            };
+            return ParticleRenderer;
+        }(sys.ObjectRenderer));
+        sys.ParticleRenderer = ParticleRenderer;
+        __reflect(ParticleRenderer.prototype, "egret.sys.ParticleRenderer");
         /**
          * @private
          * 粒子渲染节点

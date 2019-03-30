@@ -29,6 +29,47 @@
 
 namespace egret.sys {
 
+    //
+    export class BatchRenderer extends ObjectRenderer {
+
+        public readonly renderNodes: egret.sys.RenderNode[] = [];
+   
+        constructor() {
+            super();
+            console.log('BatchRenderer constructor');
+        }
+
+        public onPrerender(): void {
+            console.log('BatchRenderer onPrerender');
+        }
+
+        public start(): void {
+            console.log('BatchRenderer start');
+        }
+
+        public stop(): void {
+            console.log('BatchRenderer stop');
+            this.flush();
+        }
+
+        public flush(): void {
+            console.log('BatchRenderer flush = ' + this.renderNodes.length);
+            this.renderNodes.length = 0;
+        }
+
+        public render(renderNode: egret.sys.RenderNode): void {
+            console.log('BatchRenderer render = ' + renderNode.type);
+            this.renderNodes.push(renderNode);
+        }
+
+        public contextChange(gl: WebGLRenderingContext): void {
+            console.log('BatchRenderer contextChange = ' + gl);
+        }
+
+        public destroy(): void {
+            console.log('BatchRenderer destroy');
+        }
+    }
 
 
     /**
