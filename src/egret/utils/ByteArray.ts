@@ -222,7 +222,7 @@ namespace egret {
          * @memberOf ByteArray
          */
         public get readAvailable() {
-            return this.write_position - this._position;
+            return this.data.byteLength - this._position;
         }
 
         public get buffer(): ArrayBuffer {
@@ -364,7 +364,7 @@ namespace egret {
          * @language zh_CN
          */
         public get bytesAvailable(): number {
-            return this.data.byteLength - this._position;
+            return this.write_position - this._position;
         }
 
         /**
