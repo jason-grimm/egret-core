@@ -326,7 +326,7 @@ namespace egret {
 
         public set length(value: number) {
             this.write_position = value;
-            if (this.data.byteLength > value) {
+            if (this._position > value) {
                 this._position = value;
             }
             this._validateBuffer(value);
